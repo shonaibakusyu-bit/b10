@@ -1,125 +1,198 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BACCHUS 10秒チャレンジ</title>
 
 <style>
 
-body{
+*{
     margin:0;
-    background:#000;
-    color:white;
-    font-family:Arial, sans-serif;
+    padding:0;
+    box-sizing:border-box;
+}
 
-    height:100vh;
+body{
+    background:#000;
+    color:#fff;
+    font-family:sans-serif;
+
+    overflow:hidden;
 
     display:flex;
-    flex-direction:column;
     justify-content:center;
     align-items:center;
 
-    overflow:hidden;
+    height:100vh;
+
+    text-align:center;
 }
 
-/* タイトル */
+.container{
+
+    width:100%;
+    max-width:700px;
+
+    padding:20px;
+}
+
 h1{
-    margin:0;
+
     font-size:64px;
-    font-weight:bold;
-    letter-spacing:2px;
+    font-weight:900;
+
+    margin-bottom:8px;
+
 }
 
-/* by BACCHUS */
-#subTitle{
-    margin-top:8px;
-    margin-bottom:45px;
+.sub{
 
-    font-size:22px;
+    font-size:18px;
     letter-spacing:5px;
 
-    color:#777;
+    color:#888;
+
+    margin-bottom:30px;
 }
 
-/* タイマー */
 #timer{
-    font-size:190px;
-    font-weight:bold;
+
+    font-size:170px;
+    font-weight:900;
+
     line-height:1;
+
+    margin-bottom:25px;
+
+    text-shadow:
+        0 0 10px rgba(255,255,255,0.15);
+
 }
 
-/* 判定 */
-#result{
-    height:80px;
-    margin-top:30px;
+#message{
 
-    font-size:50px;
-    font-weight:bold;
-}
+    min-height:70px;
 
-/* ボタン */
-button{
-    margin-top:35px;
+    font-size:52px;
+    font-weight:900;
 
-    width:310px;
-    height:120px;
+    margin-bottom:30px;
 
-    border:none;
-    border-radius:28px;
-
-    background:#ff0000;
-    color:white;
-
-    font-size:56px;
-    font-weight:bold;
-
-    cursor:pointer;
-
-    transition:0.15s;
-}
-
-button:active{
-    transform:scale(0.96);
-}
-
-/* 判定カラー */
-
-.god{
-    color:#00ff66;
-    text-shadow:0 0 25px #00ff66;
-}
-
-.near{
-    color:#ffd400;
-    text-shadow:0 0 20px #ffd400;
-}
-
-.good{
-    color:#ff9900;
-}
-
-.miss{
-    color:#ff5555;
-}
-
-.bad{
     color:#888;
 }
 
-/* 右下フルスクリーンエリア */
+#startBtn{
 
-#fullscreen-area{
+    border:none;
+
+    background:#ff2200;
+    color:#fff;
+
+    font-size:54px;
+    font-weight:900;
+
+    padding:24px 70px;
+
+    border-radius:24px;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 15px rgba(255,0,0,0.5),
+        0 0 35px rgba(255,0,0,0.35);
+
+    transition:0.1s;
+}
+
+#startBtn:active{
+
+    transform:scale(0.96);
+
+}
+
+canvas{
+
     position:fixed;
+    top:0;
+    left:0;
 
-    right:0;
-    bottom:0;
+    pointer-events:none;
+}
 
-    width:120px;
-    height:120px;
+.flash{
 
-    opacity:0.03;
+    animation:flashBg 0.12s alternate 10;
+
+}
+
+@keyframes flashBg{
+
+    from{
+        background:#000;
+    }
+
+    to{
+        background:#00ff66;
+    }
+
+}
+
+.rainbow{
+
+    animation:rainbow 1s linear infinite;
+
+}
+
+@keyframes rainbow{
+
+    0%{color:#ff0000;}
+    20%{color:#ffff00;}
+    40%{color:#00ff00;}
+    60%{color:#00ffff;}
+    80%{color:#ff00ff;}
+    100%{color:#ff0000;}
+
+}
+
+@media(max-width:768px){
+
+    h1{
+
+        font-size:44px;
+
+    }
+
+    .sub{
+
+        font-size:15px;
+
+        margin-bottom:20px;
+    }
+
+    #timer{
+
+        font-size:105px;
+
+        margin-bottom:20px;
+    }
+
+    #message{
+
+        font-size:34px;
+
+        margin-bottom:20px;
+
+        min-height:45px;
+    }
+
+    #startBtn{
+
+        font-size:38px;
+
+        padding:20px 45px;
+    }
+
 }
 
 </style>
@@ -127,287 +200,335 @@ button:active{
 
 <body>
 
-<h1>10秒チャレンジ</h1>
+<canvas id="confetti"></canvas>
 
-<div id="subTitle">by BACCHUS</div>
+<div class="container">
 
-<div id="timer">0.000</div>
+    <h1>10秒チャレンジ</h1>
 
-<div id="result"></div>
+    <div class="sub">by BACCHUS</div>
 
-<button id="mainBtn">START</button>
+    <div id="timer">0.00</div>
 
-<div id="fullscreen-area"></div>
+    <div id="message">READY?</div>
+
+    <button id="startBtn">START</button>
+
+</div>
 
 <script>
 
-const timer = document.getElementById("timer");
-const result = document.getElementById("result");
-const mainBtn = document.getElementById("mainBtn");
+const timerEl = document.getElementById("timer");
+const msgEl = document.getElementById("message");
+const startBtn = document.getElementById("startBtn");
 
 let running = false;
-let startTime = 0;
-let interval = null;
-let tickInterval = null;
+let startTime;
+let interval;
 
-let audioCtx = null;
+//
+// Audio
+//
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-/* ---------- Audio ---------- */
-
-function getAudio(){
-
-    if(!audioCtx){
-
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-
-    return audioCtx;
-}
-
-function beep(freq, duration, volume = 0.12){
-
-    const ctx = getAudio();
-
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = "square";
-    osc.frequency.value = freq;
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    gain.gain.setValueAtTime(volume, ctx.currentTime);
-
-    gain.gain.exponentialRampToValueAtTime(
-        0.001,
-        ctx.currentTime + duration
-    );
-
-    osc.start();
-    osc.stop(ctx.currentTime + duration);
-}
-
-/* 開始音 */
-
-function startSound(){
-
-    beep(650,0.08,0.12);
-
-    setTimeout(()=>{
-
-        beep(850,0.08,0.12);
-
-    },90);
-
-    setTimeout(()=>{
-
-        beep(1100,0.10,0.12);
-
-    },180);
-}
-
-/* カウント音 */
-
+//
+// テッテッテッテ音
+//
 function tickSound(){
 
-    beep(950,0.025,0.035);
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.type = "square";
+
+    osc.frequency.value = 950;
+
+    gain.gain.value = 0.018;
+
+    osc.start();
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        audioCtx.currentTime + 0.04
+    );
+
+    osc.stop(audioCtx.currentTime + 0.04);
+
 }
 
-/* 停止音 */
+//
+// 成功音
+//
+function successSound(){
 
-function stopSound(){
+    for(let i=0;i<10;i++){
 
-    beep(260,0.12,0.14);
+        setTimeout(()=>{
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.type = "triangle";
+
+            osc.frequency.value = 700 + (i * 70);
+
+            gain.gain.value = 0.04;
+
+            osc.start();
+
+            setTimeout(()=>{
+                osc.stop();
+            },120);
+
+        },i*60);
+
+    }
+
 }
 
-/* 神 */
+//
+// 紙吹雪
+//
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
 
-function godSound(){
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-    beep(900,0.08,0.16);
+let confetti = [];
 
-    setTimeout(()=>{
+function createConfetti(){
 
-        beep(1200,0.08,0.16);
+    confetti = [];
 
-    },90);
+    for(let i=0;i<250;i++){
 
-    setTimeout(()=>{
+        confetti.push({
 
-        beep(1500,0.15,0.16);
+            x:Math.random()*canvas.width,
+            y:Math.random()*canvas.height - canvas.height,
 
-    },180);
+            size:6 + Math.random()*10,
+
+            speed:2 + Math.random()*5,
+
+            color:`hsl(${Math.random()*360},100%,50%)`,
+
+            rotate:Math.random()*360
+
+        });
+
+    }
+
+    animateConfetti();
+
 }
 
-/* ニア */
+function animateConfetti(){
 
-function nearSound(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    beep(900,0.08,0.13);
+    confetti.forEach(c=>{
 
-    setTimeout(()=>{
+        ctx.save();
 
-        beep(1100,0.10,0.13);
+        ctx.translate(c.x,c.y);
 
-    },100);
+        ctx.rotate(c.rotate);
+
+        ctx.fillStyle = c.color;
+
+        ctx.fillRect(0,0,c.size,c.size);
+
+        ctx.restore();
+
+        c.y += c.speed;
+        c.rotate += 0.1;
+
+    });
+
+    requestAnimationFrame(animateConfetti);
+
 }
 
-/* ハズレ */
+//
+// タイマー
+//
+function toggleTimer(){
 
-function badSound(){
+    if(!running){
 
-    beep(180,0.18,0.14);
+        audioCtx.resume();
+
+        running = true;
+
+        startTime = performance.now();
+
+        msgEl.textContent = "...";
+        msgEl.className = "";
+        msgEl.style.color = "#888";
+
+        startBtn.textContent = "STOP";
+
+        interval = setInterval(()=>{
+
+            const elapsed = (performance.now() - startTime) / 1000;
+
+            timerEl.textContent = elapsed.toFixed(2);
+
+            //
+            // テッテッテッテ
+            //
+            tickSound();
+
+        },50);
+
+    }else{
+
+        running = false;
+
+        clearInterval(interval);
+
+        startBtn.textContent = "START";
+
+        const finalTime = parseFloat(timerEl.textContent);
+
+        judge(finalTime);
+
+    }
+
 }
 
-/* ---------- 判定 ---------- */
-
+//
+// 判定
+//
 function judge(time){
 
-    const diff = Math.abs(10 - time);
+    const diff = Math.abs(time - 10.00);
 
-    result.className = "";
+    //
+    // 神
+    //
+    if(diff <= 0.00){
 
-    if(diff <= 0.005){
+        msgEl.textContent = "神！！！";
 
-        result.textContent = "神！！";
-        result.className = "god";
+        msgEl.className = "rainbow";
 
-        godSound();
+        document.body.classList.add("flash");
 
-    }else if(diff <= 0.050){
+        createConfetti();
 
-        result.textContent = "ニアピン！";
-        result.className = "near";
+        successSound();
 
-        nearSound();
+        if(navigator.vibrate){
 
-    }else if(diff <= 0.150){
+            navigator.vibrate([200,100,200,100,300]);
 
-        result.textContent = "かなり惜しい！";
-        result.className = "good";
-
-        nearSound();
-
-    }else if(diff <= 0.300){
-
-        result.textContent = "惜しい！";
-        result.className = "miss";
-
-        stopSound();
-
-    }else{
-
-        result.textContent = "まだまだ！";
-        result.className = "bad";
-
-        badSound();
-    }
-}
-
-/* ---------- START ---------- */
-
-function startGame(){
-
-    running = true;
-
-    startTime = Date.now();
-
-    timer.textContent = "0.000";
-
-    result.textContent = "";
-    result.className = "";
-
-    mainBtn.textContent = "STOP";
-
-    startSound();
-
-    interval = setInterval(()=>{
-
-        const current =
-            (Date.now() - startTime) / 1000;
-
-        timer.textContent = current.toFixed(3);
-
-    },10);
-
-    tickInterval = setInterval(()=>{
-
-        if(running){
-
-            tickSound();
         }
 
-    },500);
+        setTimeout(()=>{
+            document.body.classList.remove("flash");
+        },1500);
+
+    }
+
+    //
+    // 神ニアピン
+    // ±0.01
+    //
+    else if(diff <= 0.01){
+
+        msgEl.textContent = "神ニアピン！！！";
+
+        msgEl.style.color = "#00ffee";
+
+        createConfetti();
+
+        successSound();
+
+    }
+
+    //
+    // めっちゃ惜しい
+    // ±0.05
+    //
+    else if(diff <= 0.05){
+
+        msgEl.textContent = "めっちゃ惜しい！！";
+
+        msgEl.style.color = "#ffe600";
+
+    }
+
+    //
+    // 惜しい
+    // ±0.10
+    //
+    else if(diff <= 0.10){
+
+        msgEl.textContent = "惜しい！";
+
+        msgEl.style.color = "#ff5555";
+
+    }
+
+    //
+    // まだまだ
+    //
+    else{
+
+        msgEl.textContent = "まだまだ！";
+
+        msgEl.style.color = "#888";
+
+    }
+
 }
 
-/* ---------- STOP ---------- */
+//
+// ボタン
+//
+startBtn.addEventListener("click",toggleTimer);
 
-function stopGame(){
+//
+// スペースキー
+//
+document.addEventListener("keydown",(e)=>{
 
-    running = false;
+    if(e.code === "Space"){
 
-    clearInterval(interval);
-    clearInterval(tickInterval);
+        e.preventDefault();
 
-    mainBtn.textContent = "START";
+        toggleTimer();
 
-    const finalTime =
-        parseFloat(timer.textContent);
-
-    judge(finalTime);
-}
-
-/* ---------- TOGGLE ---------- */
-
-function toggleGame(){
-
-    if(running){
-
-        stopGame();
-
-    }else{
-
-        startGame();
     }
-}
 
-/* ボタン */
+});
 
-mainBtn.addEventListener(
-    "click",
-    toggleGame
-);
+//
+// Dキーで10.00強制テスト
+//
+document.addEventListener("keydown",(e)=>{
 
-/* スペースキー */
+    if(e.key === "d" || e.key === "D"){
 
-document.addEventListener(
-    "keydown",
-    (e)=>{
+        running = false;
 
-        if(e.code === "Space"){
+        clearInterval(interval);
 
-            e.preventDefault();
+        timerEl.textContent = "10.00";
 
-            toggleGame();
-        }
+        judge(10.00);
+
     }
-);
 
-/* 右下フルスクリーン */
-
-document
-.getElementById("fullscreen-area")
-.addEventListener("click",()=>{
-
-    if(!document.fullscreenElement){
-
-        document.documentElement.requestFullscreen();
-
-    }else{
-
-        document.exitFullscreen();
-    }
 });
 
 </script>
