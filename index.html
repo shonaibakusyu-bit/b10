@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BACCHUS 10秒チャレンジ</title>
 
 <style>
@@ -14,184 +14,417 @@
 }
 
 body{
+
     background:#000;
-    color:#fff;
-    font-family:sans-serif;
-
     overflow:hidden;
+    color:#fff;
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    font-family:
+    "Arial Black",
+    sans-serif;
 
-    height:100vh;
-
-    text-align:center;
 }
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+    inset:0;
+
+    background:
+    radial-gradient(circle at 20% 30%, rgba(255,255,0,.05), transparent 30%),
+    radial-gradient(circle at 80% 60%, rgba(255,0,0,.05), transparent 30%);
+
+}
+
+/* メイン */
 
 .container{
 
     width:100%;
-    max-width:700px;
+    height:100vh;
 
-    padding:20px;
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    position:relative;
+
 }
 
-h1{
+/* タイトル */
 
-    font-size:64px;
+.title{
+
+    font-size:clamp(56px,5vw,92px);
+
+    font-weight:900;
+
+    margin-bottom:10px;
+
+    text-shadow:
+    0 0 8px rgba(255,255,255,.55);
+
+}
+
+/* by */
+
+.by{
+
+    position:absolute;
+
+    top:18px;
+    right:24px;
+
+    color:#ffe66d;
+
+    font-size:22px;
+
+    letter-spacing:2px;
+
+}
+
+/* タイマー */
+
+#timer{
+
+    font-size:clamp(170px,18vw,300px);
+
+    line-height:0.95;
+
+    font-weight:900;
+
+    text-shadow:
+    0 0 20px rgba(255,255,255,.42),
+    0 0 40px rgba(255,255,255,.12);
+
+}
+
+/* 判定 */
+
+#judge{
+
+    min-height:80px;
+
+    margin-top:10px;
+
+    font-size:clamp(44px,4vw,74px);
+
+    font-weight:900;
+
+    text-align:center;
+
+}
+
+#subJudge{
+
+    min-height:38px;
+
+    margin-top:5px;
+
+    font-size:clamp(24px,2vw,36px);
+
+    font-weight:bold;
+
+}
+
+/* ボタン */
+
+#startBtn{
+
+    margin-top:18px;
+
+    width:min(360px,62vw);
+
+    height:105px;
+
+    border:none;
+
+    border-radius:26px;
+
+    background:#ff3c00;
+
+    color:#fff;
+
+    font-size:clamp(44px,4vw,76px);
+
+    font-weight:900;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 0 20px rgba(255,80,0,.5);
+
+}
+
+/* 顔 */
+
+.face{
+
+    position:absolute;
+
+    top:50%;
+
+    width:min(290px,18vw);
+
+    aspect-ratio:1/1;
+
+    object-fit:cover;
+
+    border-radius:26px;
+
+    border:5px solid #ffd700;
+
+    opacity:0;
+
+    transition:.35s;
+
+    box-shadow:
+    0 0 24px rgba(255,215,0,.55);
+
+}
+
+#faceLeft{
+
+    left:35px;
+
+    transform:
+    translate(-180px,-50%)
+    scale(.4);
+
+}
+
+#faceRight{
+
+    right:35px;
+
+    transform:
+    translate(180px,-50%)
+    scale(.4);
+
+}
+
+.face.show{
+
+    opacity:1;
+
+}
+
+#faceLeft.show{
+
+    transform:
+    translate(0,-50%)
+    scale(1);
+
+}
+
+#faceRight.show{
+
+    transform:
+    translate(0,-50%)
+    scale(1);
+
+}
+
+/* 下UI */
+
+.bottomUI{
+
+    position:absolute;
+
+    bottom:18px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:min(900px,92vw);
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-end;
+
+}
+
+/* Dボタン */
+
+.dWrap{
+
+    width:105px;
+
+    height:105px;
+
+    background:#111;
+
+    border:3px solid #ffd700;
+
+    border-radius:18px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:
+    0 0 14px rgba(255,215,0,.2);
+
+}
+
+.dKey{
+
+    width:58px;
+    height:58px;
+
+    border-radius:12px;
+
+    background:#222;
+
+    border:2px solid #fff;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:36px;
+    font-weight:900;
+
+}
+
+/* SLOT */
+
+.slotWrap{
+
+    width:250px;
+
+    background:#111;
+
+    border:3px solid #ffd700;
+
+    border-radius:18px;
+
+    padding:10px;
+
+    box-shadow:
+    0 0 16px rgba(255,215,0,.22);
+
+    opacity:0;
+
+    transition:.3s;
+
+}
+
+.slotWrap.show{
+
+    opacity:1;
+
+}
+
+.slotTitle{
+
+    text-align:center;
+
+    color:#ffd700;
+
+    font-size:20px;
+
     font-weight:900;
 
     margin-bottom:8px;
 
 }
 
-.sub{
+.slotArea{
 
-    font-size:18px;
-    letter-spacing:5px;
+    display:flex;
 
-    color:#888;
-
-    margin-bottom:30px;
-}
-
-#timer{
-
-    font-size:170px;
-    font-weight:900;
-
-    line-height:1;
-
-    margin-bottom:25px;
-
-    text-shadow:
-        0 0 10px rgba(255,255,255,0.15);
+    gap:6px;
 
 }
 
-#message{
+.slotItem{
 
-    min-height:70px;
+    flex:1;
 
-    font-size:52px;
-    font-weight:900;
+    height:65px;
 
-    margin-bottom:30px;
+    background:#222;
 
-    color:#888;
-}
+    border-radius:12px;
 
-#startBtn{
+    border:2px solid #555;
 
-    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-    background:#ff2200;
-    color:#fff;
-
-    font-size:54px;
-    font-weight:900;
-
-    padding:24px 70px;
-
-    border-radius:24px;
-
-    cursor:pointer;
-
-    box-shadow:
-        0 0 15px rgba(255,0,0,0.5),
-        0 0 35px rgba(255,0,0,0.35);
-
-    transition:0.1s;
-}
-
-#startBtn:active{
-
-    transform:scale(0.96);
+    font-size:30px;
 
 }
 
-canvas{
-
-    position:fixed;
-    top:0;
-    left:0;
-
-    pointer-events:none;
-}
+/* フラッシュ */
 
 .flash{
 
-    animation:flashBg 0.12s alternate 10;
+    position:fixed;
+    inset:0;
+
+    background:#00ff99;
+
+    opacity:0;
+
+    pointer-events:none;
 
 }
 
-@keyframes flashBg{
+.flash.active{
 
-    from{
-        background:#000;
-    }
-
-    to{
-        background:#00ff66;
-    }
+    animation:flash .3s;
 
 }
 
-.rainbow{
+@keyframes flash{
 
-    animation:rainbow 1s linear infinite;
-
-}
-
-@keyframes rainbow{
-
-    0%{color:#ff0000;}
-    20%{color:#ffff00;}
-    40%{color:#00ff00;}
-    60%{color:#00ffff;}
-    80%{color:#ff00ff;}
-    100%{color:#ff0000;}
+    0%{opacity:.6;}
+    100%{opacity:0;}
 
 }
 
-@media(max-width:768px){
+/* 画面揺れ */
 
-    h1{
+body.shake{
 
-        font-size:44px;
+    animation:shake .08s linear infinite;
 
-    }
+}
 
-    .sub{
+@keyframes shake{
 
-        font-size:15px;
+    0%{transform:translate(2px,0);}
+    25%{transform:translate(-2px,2px);}
+    50%{transform:translate(2px,-2px);}
+    75%{transform:translate(-2px,1px);}
+    100%{transform:translate(0,0);}
 
-        margin-bottom:20px;
-    }
+}
 
-    #timer{
+/* 紙吹雪 */
 
-        font-size:105px;
+.confetti{
 
-        margin-bottom:20px;
-    }
+    position:fixed;
 
-    #message{
+    width:10px;
+    height:18px;
 
-        font-size:34px;
+    top:-20px;
 
-        margin-bottom:20px;
+    z-index:9999;
 
-        min-height:45px;
-    }
-
-    #startBtn{
-
-        font-size:38px;
-
-        padding:20px 45px;
-    }
+    pointer-events:none;
 
 }
 
@@ -200,332 +433,582 @@ canvas{
 
 <body>
 
-<canvas id="confetti"></canvas>
+<div class="flash" id="flash"></div>
 
 <div class="container">
 
-    <h1>10秒チャレンジ</h1>
+    <div class="by">
+        by BACCHUS
+    </div>
 
-    <div class="sub">by BACCHUS</div>
+    <div class="title">
+        10秒チャレンジ
+    </div>
 
-    <div id="timer">0.00</div>
+    <div id="timer">
+        0.00
+    </div>
 
-    <div id="message">READY?</div>
+    <div id="judge">
+        READY?
+    </div>
 
-    <button id="startBtn">START</button>
+    <div id="subJudge"></div>
+
+    <button id="startBtn">
+        START
+    </button>
+
+    <!-- 顔 -->
+
+    <img src="./face.png" class="face" id="faceLeft">
+    <img src="./face.png" class="face" id="faceRight">
+
+</div>
+
+<!-- 下 -->
+
+<div class="bottomUI">
+
+    <div class="dWrap">
+
+        <div class="dKey">
+            D
+        </div>
+
+    </div>
+
+    <div class="slotWrap" id="slotWrap">
+
+        <div class="slotTitle">
+            BONUS SLOT
+        </div>
+
+        <div class="slotArea">
+
+            <div class="slotItem" id="slot1">
+                🥃
+            </div>
+
+            <div class="slotItem" id="slot2">
+                🥃
+            </div>
+
+            <div class="slotItem" id="slot3">
+                🥃
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
 <script>
 
-const timerEl = document.getElementById("timer");
-const msgEl = document.getElementById("message");
-const startBtn = document.getElementById("startBtn");
+/* ===== 要素 ===== */
+
+const timerEl =
+document.getElementById("timer");
+
+const judgeEl =
+document.getElementById("judge");
+
+const subJudgeEl =
+document.getElementById("subJudge");
+
+const btn =
+document.getElementById("startBtn");
+
+const faceLeft =
+document.getElementById("faceLeft");
+
+const faceRight =
+document.getElementById("faceRight");
+
+const flash =
+document.getElementById("flash");
+
+const slotWrap =
+document.getElementById("slotWrap");
+
+const slot1 =
+document.getElementById("slot1");
+
+const slot2 =
+document.getElementById("slot2");
+
+const slot3 =
+document.getElementById("slot3");
+
+/* 音声 */
+
+const oshiiVoice =
+new Audio("./oshii.m4a");
+
+oshiiVoice.volume = 1.0;
+
+/* audio */
+
+const audioCtx =
+new(window.AudioContext||window.webkitAudioContext)();
+
+/* 状態 */
 
 let running = false;
-let startTime;
-let interval;
 
-//
-// Audio
-//
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let startTime = 0;
 
-//
-// テッテッテッテ音
-//
+let animationFrame;
+
+let tickInterval;
+
+/* tick音 */
+
 function tickSound(){
 
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
+    const osc =
+    audioCtx.createOscillator();
 
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
+    const gain =
+    audioCtx.createGain();
 
     osc.type = "square";
 
-    osc.frequency.value = 950;
+    osc.frequency.value = 170;
 
-    gain.gain.value = 0.018;
+    gain.gain.value = 0.08;
+
+    osc.connect(gain);
+
+    gain.connect(audioCtx.destination);
 
     osc.start();
-
-    gain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        audioCtx.currentTime + 0.04
-    );
 
     osc.stop(audioCtx.currentTime + 0.04);
 
 }
 
-//
-// 成功音
-//
-function successSound(){
+/* beep */
 
-    for(let i=0;i<10;i++){
+function beep(freq,duration,volume=.3){
+
+    const osc =
+    audioCtx.createOscillator();
+
+    const gain =
+    audioCtx.createGain();
+
+    osc.type = "square";
+
+    osc.frequency.value = freq;
+
+    gain.gain.value = volume;
+
+    osc.connect(gain);
+
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+
+    setTimeout(()=>{
+        osc.stop();
+    },duration);
+
+}
+
+/* 神音 */
+
+function godSound(){
+
+    beep(700,120,.55);
+
+    setTimeout(()=>{
+        beep(1200,160,.7);
+    },120);
+
+    setTimeout(()=>{
+        beep(1600,240,.9);
+    },260);
+
+}
+
+/* flash */
+
+function flashEffect(){
+
+    flash.classList.add("active");
+
+    setTimeout(()=>{
+        flash.classList.remove("active");
+    },300);
+
+}
+
+/* 顔 */
+
+function showFaces(){
+
+    faceLeft.classList.add("show");
+    faceRight.classList.add("show");
+
+}
+
+function hideFaces(){
+
+    faceLeft.classList.remove("show");
+    faceRight.classList.remove("show");
+
+}
+
+/* shake */
+
+function shake(){
+
+    document.body.classList.add("shake");
+
+    setTimeout(()=>{
+        document.body.classList.remove("shake");
+    },700);
+
+}
+
+/* 紙吹雪 */
+
+function confettiBurst(){
+
+    for(let i=0;i<70;i++){
+
+        const c =
+        document.createElement("div");
+
+        c.className = "confetti";
+
+        c.style.left =
+        Math.random()*100+"vw";
+
+        c.style.background =
+        ["#ff0","#0ff","#0f0","#fff","#ff6600"]
+        [Math.floor(Math.random()*5)];
+
+        document.body.appendChild(c);
 
         setTimeout(()=>{
 
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+            c.style.transition =
+            `all ${2+Math.random()*2}s linear`;
 
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            c.style.top = "110vh";
 
-            osc.type = "triangle";
+            c.style.transform =
+            `translateX(${(Math.random()-.5)*300}px)
+            rotate(${Math.random()*720}deg)`;
 
-            osc.frequency.value = 700 + (i * 70);
+            c.style.opacity = "0";
 
-            gain.gain.value = 0.04;
+        },20);
 
-            osc.start();
-
-            setTimeout(()=>{
-                osc.stop();
-            },120);
-
-        },i*60);
+        setTimeout(()=>{
+            c.remove();
+        },4200);
 
     }
 
 }
 
-//
-// 紙吹雪
-//
-const canvas = document.getElementById("confetti");
-const ctx = canvas.getContext("2d");
+/* スロット */
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function spinSlot(){
 
-let confetti = [];
+    slotWrap.classList.add("show");
 
-function createConfetti(){
+    const list = [
+        "🥃",
+        "🎫",
+        "🔥",
+        "🍺"
+    ];
 
-    confetti = [];
+    let count = 0;
 
-    for(let i=0;i<250;i++){
+    const interval =
+    setInterval(()=>{
 
-        confetti.push({
+        slot1.innerHTML =
+        list[Math.floor(Math.random()*list.length)];
 
-            x:Math.random()*canvas.width,
-            y:Math.random()*canvas.height - canvas.height,
+        slot2.innerHTML =
+        list[Math.floor(Math.random()*list.length)];
 
-            size:6 + Math.random()*10,
+        slot3.innerHTML =
+        list[Math.floor(Math.random()*list.length)];
 
-            speed:2 + Math.random()*5,
+        count++;
 
-            color:`hsl(${Math.random()*360},100%,50%)`,
+        if(count > 18){
 
-            rotate:Math.random()*360
+            clearInterval(interval);
 
-        });
+            slot1.innerHTML="🥃";
+            slot2.innerHTML="🥃";
+            slot3.innerHTML="🥃";
 
-    }
-
-    animateConfetti();
-
-}
-
-function animateConfetti(){
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    confetti.forEach(c=>{
-
-        ctx.save();
-
-        ctx.translate(c.x,c.y);
-
-        ctx.rotate(c.rotate);
-
-        ctx.fillStyle = c.color;
-
-        ctx.fillRect(0,0,c.size,c.size);
-
-        ctx.restore();
-
-        c.y += c.speed;
-        c.rotate += 0.1;
-
-    });
-
-    requestAnimationFrame(animateConfetti);
-
-}
-
-//
-// タイマー
-//
-function toggleTimer(){
-
-    if(!running){
-
-        audioCtx.resume();
-
-        running = true;
-
-        startTime = performance.now();
-
-        msgEl.textContent = "...";
-        msgEl.className = "";
-        msgEl.style.color = "#888";
-
-        startBtn.textContent = "STOP";
-
-        interval = setInterval(()=>{
-
-            const elapsed = (performance.now() - startTime) / 1000;
-
-            timerEl.textContent = elapsed.toFixed(2);
-
-            //
-            // テッテッテッテ
-            //
-            tickSound();
-
-        },50);
-
-    }else{
-
-        running = false;
-
-        clearInterval(interval);
-
-        startBtn.textContent = "START";
-
-        const finalTime = parseFloat(timerEl.textContent);
-
-        judge(finalTime);
-
-    }
-
-}
-
-//
-// 判定
-//
-function judge(time){
-
-    const diff = Math.abs(time - 10.00);
-
-    //
-    // 神
-    //
-    if(diff <= 0.00){
-
-        msgEl.textContent = "神！！！";
-
-        msgEl.className = "rainbow";
-
-        document.body.classList.add("flash");
-
-        createConfetti();
-
-        successSound();
-
-        if(navigator.vibrate){
-
-            navigator.vibrate([200,100,200,100,300]);
+            subJudgeEl.innerHTML=
+            "テキーラ1杯無料！！！";
 
         }
 
+    },80);
+
+}
+
+/* 開始 */
+
+function startGame(){
+
+    if(running){
+
+        stopGame();
+
+        return;
+
+    }
+
+    audioCtx.resume();
+
+    running = true;
+
+    hideFaces();
+
+    slotWrap.classList.remove("show");
+
+    btn.innerHTML = "STOP";
+
+    judgeEl.style.color="#777";
+
+    judgeEl.innerHTML="NOW...";
+
+    subJudgeEl.innerHTML="";
+
+    startTime = performance.now();
+
+    tickInterval =
+    setInterval(()=>{
+
+        tickSound();
+
+    },100);
+
+    updateTimer();
+
+}
+
+/* 更新 */
+
+function updateTimer(){
+
+    if(!running) return;
+
+    const now = performance.now();
+
+    const elapsed =
+    (now-startTime)/1000;
+
+    timerEl.innerHTML =
+    elapsed.toFixed(2);
+
+    animationFrame =
+    requestAnimationFrame(updateTimer);
+
+}
+
+/* 停止 */
+
+function stopGame(){
+
+    running = false;
+
+    clearInterval(tickInterval);
+
+    cancelAnimationFrame(animationFrame);
+
+    btn.innerHTML = "START";
+
+    const value =
+    parseFloat(timerEl.innerHTML);
+
+    const diff =
+    Math.abs(10-value);
+
+    /* 10.00ジャスト */
+
+    if(value.toFixed(2) === "10.00"){
+
+        judgeEl.style.color="#00ff99";
+
+        judgeEl.innerHTML=
+        "神！！！";
+
+        subJudgeEl.innerHTML=
+        "テキーラチャレンジ！";
+
+        flashEffect();
+
+        shake();
+
+        confettiBurst();
+
+        showFaces();
+
+        spinSlot();
+
+        godSound();
+
         setTimeout(()=>{
-            document.body.classList.remove("flash");
-        },1500);
+
+            const wow =
+            new SpeechSynthesisUtterance("おめでとうございます");
+
+            wow.lang = "ja-JP";
+
+            wow.rate = 0.9;
+
+            wow.pitch = 0.8;
+
+            wow.volume = 1;
+
+            speechSynthesis.speak(wow);
+
+        },300);
 
     }
 
-    //
-    // 神ニアピン
-    // ±0.01
-    //
-    else if(diff <= 0.01){
+    /* 神ニアピン */
 
-        msgEl.textContent = "神ニアピン！！！";
+    else if(diff <= 0.03){
 
-        msgEl.style.color = "#00ffee";
+        slotWrap.classList.remove("show");
 
-        createConfetti();
+        judgeEl.style.color="#00ff99";
 
-        successSound();
+        judgeEl.innerHTML=
+        "神ニアピン!!!";
 
-    }
+        subJudgeEl.innerHTML=
+        "超惜しい！！！";
 
-    //
-    // めっちゃ惜しい
-    // ±0.05
-    //
-    else if(diff <= 0.05){
+        flashEffect();
 
-        msgEl.textContent = "めっちゃ惜しい！！";
+        shake();
 
-        msgEl.style.color = "#ffe600";
+        showFaces();
+
+        godSound();
 
     }
 
-    //
-    // 惜しい
-    // ±0.10
-    //
-    else if(diff <= 0.10){
+    /* 惜しい */
 
-        msgEl.textContent = "惜しい！";
+    else if(diff <= 0.12){
 
-        msgEl.style.color = "#ff5555";
+        slotWrap.classList.remove("show");
+
+        judgeEl.style.color="#ff6666";
+
+        judgeEl.innerHTML="惜しい！";
+
+        subJudgeEl.innerHTML=
+        "あと少し！！";
+
+        showFaces();
+
+        shake();
+
+        oshiiVoice.currentTime = 0;
+
+        oshiiVoice.play();
 
     }
 
-    //
-    // まだまだ
-    //
+    /* 普通 */
+
+    else if(diff <= 0.4){
+
+        slotWrap.classList.remove("show");
+
+        judgeEl.style.color="#ffaa00";
+
+        judgeEl.innerHTML="おしい〜";
+
+        subJudgeEl.innerHTML=
+        "再チャレンジ！";
+
+        beep(500,180,.2);
+
+    }
+
+    /* ダメ */
+
     else{
 
-        msgEl.textContent = "まだまだ！";
+        slotWrap.classList.remove("show");
 
-        msgEl.style.color = "#888";
+        judgeEl.style.color="#888";
+
+        judgeEl.innerHTML="まだまだ！";
+
+        subJudgeEl.innerHTML=
+        "修行不足！！";
+
+        beep(180,350,.18);
 
     }
 
 }
 
-//
-// ボタン
-//
-startBtn.addEventListener("click",toggleTimer);
+/* ボタン */
 
-//
-// スペースキー
-//
+btn.addEventListener("click",startGame);
+
+/* キー */
+
 document.addEventListener("keydown",(e)=>{
 
-    if(e.code === "Space"){
+    /* SPACE */
+
+    if(e.code==="Space"){
 
         e.preventDefault();
 
-        toggleTimer();
+        startGame();
 
     }
 
-});
+    /* D */
 
-//
-// Dキーで10.00強制テスト
-//
-document.addEventListener("keydown",(e)=>{
+    if(e.key.toLowerCase()==="d"){
 
-    if(e.key === "d" || e.key === "D"){
+        timerEl.innerHTML = "10.00";
 
-        running = false;
+        judgeEl.style.color="#00ff99";
 
-        clearInterval(interval);
+        judgeEl.innerHTML=
+        "神！！！";
 
-        timerEl.textContent = "10.00";
+        subJudgeEl.innerHTML=
+        "D練習成功！";
 
-        judge(10.00);
+        showFaces();
+
+        flashEffect();
+
+        shake();
+
+        confettiBurst();
+
+        spinSlot();
+
+        godSound();
 
     }
 
